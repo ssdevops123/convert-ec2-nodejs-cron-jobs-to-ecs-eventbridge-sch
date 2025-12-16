@@ -1,0 +1,41 @@
+ecs_cluster_arn = "arn:aws:ecs:us-west-2:136279434049:cluster/Test-notfier"
+
+app_name           = "testing-test-dec9th"
+environment        = "qa"
+vpc_id             = "vpc-0f3391e84c4f0ce79"  # This is DEV VPC
+ public_subnet_ids  = ["subnet-020772b505a06f11e", "subnet-0ad2a482ea544e2eb"] # DEV Public Subnets
+private_subnet_ids = ["subnet-09a5205170294f953", "subnet-06e7f91ac149c8fc9"] # DEV Private Subnets
+
+github_repo = "Plethy/RME-Server"
+github_branch  = "PRM-19306"
+
+recupe_dev_app_sg = ["sg-0919982972de5b550"]
+ecs_cpu    = 256  //deafult value= 256
+ecs_memory = 512  //default value= 512
+
+
+ecs_env_file_s3_path = "s3://recupe-devops-qa/nodejs-scripts/chat.env"
+github_connection_arn = "arn:aws:codestar-connections:us-west-2:136279434049:connection/bce23acd-20cf-4659-a6a1-60fe63d3dea3"
+ 
+ 
+scripts = [
+
+ # Patient Context Table - batch job (Runs every 1 hour)
+
+ {
+  name     = "patient_context_batch"
+  schedule = "cron(0 0/1 * * ? *)"
+  shell    = true
+  command  = ["node","context-batch.js"]
+},
+ 
+#########
+# Recupe Program Report (Every Saturday)
+  {
+  name     = "recupe_program_report"
+ // schedule = "cron(0 11 * * 6 *)"  
+  schedule = "cron(0 11 ? * 7 *)" //this value corrected to run on saturdays
+  shell    = true
+  command  = ["node", "reports/recupe_program_report.js"]
+}
+]
